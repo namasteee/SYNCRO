@@ -1372,34 +1372,6 @@ function MethodPage({ onNavigate }: { onNavigate: (page: Page) => void }) {
   );
 }
 
-function PluginMockup({ plugin }: { plugin: PluginItem }) {
-  return (
-    <div className="border-2 border-black bg-[#F3F0E9] p-4">
-      <div className="flex items-center justify-between border-b-2 border-black pb-3">
-        <div className="soft text-3xl font-black tracking-[-0.06em]">{plugin.name}</div>
-        <div
-          className="px-3 py-1 text-xs font-black uppercase"
-          style={{ background: plugin.color, color: plugin.color === "#DFFF00" ? "#000" : "#fff" }}
-        >
-          {plugin.status}
-        </div>
-      </div>
-
-      <div className="mt-4 grid gap-3">
-        <div className="h-3 w-4/5 bg-black" />
-        <div className="h-3 w-3/5 bg-black/40" />
-        <div className="grid grid-cols-3 gap-2 pt-2">
-          <div className="h-16 border-2 border-black bg-white" />
-          <div className="h-16 border-2 border-black bg-white" />
-          <div className="h-16 border-2 border-black bg-white" />
-        </div>
-        <div className="mt-2 border-2 border-black bg-white p-3">
-          <p className="text-[10px] font-black uppercase leading-4 tracking-[0.12em]">{plugin.line}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function PluginsPage({
   onOpen,
