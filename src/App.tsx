@@ -546,6 +546,89 @@ function GlobalStyles() {
         content: " / DARK";
       }
 
+
+      /* V5.9.2 HALO HOVER — photo reveal interaction */
+      .photo-halo {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+      }
+
+      .photo-halo::before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        z-index: 2;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity .35s ease, transform .35s ease;
+        transform: scale(.985);
+        background:
+          radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
+            rgba(223,255,0,.95) 0 0,
+            rgba(223,255,0,.72) 0 11%,
+            rgba(255,45,160,.55) 18%,
+            rgba(15,107,255,.38) 27%,
+            transparent 43%);
+        mix-blend-mode: screen;
+      }
+
+      .photo-halo::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity .35s ease;
+        border: 2px solid rgba(223,255,0,.95);
+        box-shadow:
+          0 0 0 2px rgba(255,45,160,.55),
+          0 0 35px rgba(223,255,0,.55),
+          0 0 70px rgba(255,45,160,.35);
+      }
+
+      .photo-halo:hover::before,
+      .photo-halo:hover::after {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .photo-halo img {
+        transition: filter .55s ease, transform .7s ease, opacity .55s ease;
+      }
+
+      /* Dark mode: base photo is B/W, hover halo reveals color */
+      [data-theme="dark"] .photo-halo:hover img {
+        filter: grayscale(0) contrast(1.02) brightness(1.02) !important;
+        opacity: 1 !important;
+      }
+
+      /* Light mode: base photo is colored, hover halo turns it more B/W/editorial */
+      [data-theme="light"] .photo-halo:hover img {
+        filter: grayscale(1) contrast(1.08) brightness(.96) !important;
+        opacity: 1 !important;
+      }
+
+      [data-theme="light"] .photo-halo::before {
+        background:
+          radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
+            rgba(255,45,160,.75) 0 0,
+            rgba(255,45,160,.50) 0 13%,
+            rgba(223,255,0,.55) 22%,
+            rgba(15,107,255,.28) 32%,
+            transparent 48%);
+        mix-blend-mode: multiply;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .photo-halo::before,
+        .photo-halo::after,
+        .photo-halo img {
+          transition: none;
+        }
+      }
+
     `}</style>
   );
 }
@@ -610,6 +693,30 @@ function BigTitle({ children, className = "" }: { children: React.ReactNode; cla
 function MidTitle({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <h2 className={`display text-[48px] sm:text-[68px] md:text-[86px] ${className}`}>{children}</h2>;
 }
+
+
+function PhotoHalo({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  function handleMove(event: React.MouseEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    event.currentTarget.style.setProperty("--mx", `${x}%`);
+    event.currentTarget.style.setProperty("--my", `${y}%`);
+  }
+
+  return (
+    <div className={`photo-halo ${className}`} onMouseMove={handleMove}>
+      {children}
+    </div>
+  );
+}
+
 
 function Header({ page, onNavigate, theme, onToggleTheme }: { page: Page; onNavigate: (page: Page) => void; theme: Theme; onToggleTheme: () => void }) {
   const [open, setOpen] = useState(false);
@@ -862,11 +969,13 @@ function HomePage({
   return (
     <>
       <section className="relative min-h-[calc(100vh-82px)] overflow-hidden border-b-2 border-black bg-black">
-        <img
-          src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=2200&q=80"
-          alt="Syncro manifesto background"
-          className="hero-photo absolute inset-0 h-full w-full object-cover grayscale"
-        />
+        <PhotoHalo className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=2200&q=80"
+            alt="Syncro manifesto background"
+            className="hero-photo h-full w-full object-cover grayscale"
+          />
+        </PhotoHalo>
         <div className="hero-mask theme-adapt-hero-mask absolute inset-0" />
 
         <div className="relative z-10 flex min-h-[calc(100vh-82px)] flex-col justify-between px-5 py-8 text-white theme-invert-text md:px-8 xl:px-10">
@@ -1004,16 +1113,16 @@ function HomeMemberCard({ role, onClick }: { role: RoleItem; onClick: () => void
       onClick={onClick}
       className="paper-card theme-team-card group w-[300px] shrink-0 snap-start overflow-hidden border-2 border-black bg-[#F3F0E9] text-left text-black transition hover:-translate-y-1 hover:shadow-[8px_8px_0_#DFFF00] md:w-[360px]"
     >
-      <div className="relative h-[290px] overflow-hidden bg-black">
+      <PhotoHalo className="relative h-[290px] bg-black">
         <img
           src={role.image}
           alt={role.title}
           className="theme-photo h-full w-full object-cover grayscale transition duration-700 group-hover:scale-110"
         />
-        <div className="absolute left-4 top-4 display text-5xl leading-none" style={{ color: role.color }}>
+        <div className="absolute left-4 top-4 z-10 display text-5xl leading-none" style={{ color: role.color }}>
           {role.number}
         </div>
-      </div>
+      </PhotoHalo>
 
       <div className="min-h-[210px] p-6">
         <div className="flex items-start justify-between gap-3">
@@ -1217,11 +1326,13 @@ function HomeServices({
 function HomePhotoBreak() {
   return (
     <section className="relative min-h-[76vh] overflow-hidden border-b-2 border-black bg-black theme-adapt-dark">
-      <img
-        src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=2200&q=80"
-        alt="Visual break"
-        className="theme-photo absolute inset-0 h-full w-full object-cover opacity-75 grayscale"
-      />
+      <PhotoHalo className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=2200&q=80"
+          alt="Visual break"
+          className="theme-photo h-full w-full object-cover opacity-75 grayscale"
+        />
+      </PhotoHalo>
       <div className="theme-photo-break-overlay absolute inset-0 bg-gradient-to-r from-black via-black/65 to-transparent" />
 
       <div className="relative z-10 flex min-h-[76vh] items-end px-5 py-14 text-white theme-invert-text md:px-8 xl:px-10">
@@ -1480,14 +1591,14 @@ function ServicesPage({
             onClick={() => onOpenService(service)}
             className="group grid min-h-[360px] overflow-hidden border-2 border-black bg-white text-left transition hover:-translate-y-1 hover:shadow-[8px_8px_0_#000] md:grid-cols-[.48fr_.52fr]"
           >
-            <div className="relative bg-black">
+            <PhotoHalo className="relative bg-black">
               <img
                 src={service.image}
                 alt={service.title}
                 className="theme-photo h-full min-h-[260px] w-full object-cover grayscale transition duration-700 group-hover:scale-105"
               />
-              <div className="absolute left-4 top-4 display text-6xl leading-none text-[#DFFF00]">0{index + 1}</div>
-            </div>
+              <div className="absolute left-4 top-4 z-10 display text-6xl leading-none text-[#DFFF00]">0{index + 1}</div>
+            </PhotoHalo>
 
             <div className="p-6">
               <h2 className="display-wide text-5xl">{service.title}</h2>
@@ -1674,11 +1785,13 @@ function WorkPage({
             onClick={() => onOpen(project)}
             className="group relative h-[460px] overflow-hidden border-2 border-black bg-black text-left text-white"
           >
-            <img
-              src={project.image}
-              alt={project.title}
-              className="theme-photo absolute inset-0 h-full w-full object-cover opacity-65 transition duration-700 group-hover:scale-110"
-            />
+            <PhotoHalo className="absolute inset-0">
+              <img
+                src={project.image}
+                alt={project.title}
+                className="theme-photo h-full w-full object-cover opacity-65 transition duration-700 group-hover:scale-110"
+              />
+            </PhotoHalo>
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
             <div className="relative flex h-full flex-col justify-between p-6">
               <div>
@@ -1782,11 +1895,13 @@ function ContactPage() {
       <div className="mt-10 grid gap-10 lg:grid-cols-[.95fr_1.05fr]">
         <div>
           <div className="relative border-2 border-black bg-black p-6 text-white">
-            <img
-              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=80"
-              alt="Creative team working"
-              className="theme-photo h-[360px] w-full object-cover grayscale"
-            />
+            <PhotoHalo className="h-[360px]">
+              <img
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=80"
+                alt="Creative team working"
+                className="theme-photo h-full w-full object-cover grayscale"
+              />
+            </PhotoHalo>
             <div className="mt-6">
               <Tag variant="white">brief / project / help</Tag>
             </div>
@@ -1851,7 +1966,9 @@ function ProjectModal({ item, onClose }: { item: ProjectItem | null; onClose: ()
         </div>
 
         <h3 className="display-wide max-w-2xl text-5xl md:text-7xl">{item.title}</h3>
-        <img src={item.image} alt={item.title} className="mt-8 h-[320px] w-full border-2 border-black object-cover" />
+        <PhotoHalo className="mt-8 h-[320px] border-2 border-black">
+          <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+        </PhotoHalo>
         <p className="mt-8 text-base leading-8 text-black/80">{item.text}</p>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
