@@ -466,6 +466,86 @@ function GlobalStyles() {
         transform: translateX(0);
       }
 
+
+      /* V5.9.1 THEME FIX — stronger, less random overrides */
+      [data-theme="light"] .theme-dark-footer {
+        background: #FAF7EF !important;
+        color: #0A0A0A !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer *,
+      [data-theme="light"] .theme-adapt-dark *,
+      [data-theme="light"] .theme-invert-text * {
+        color: #0A0A0A !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer button,
+      [data-theme="light"] .theme-dark-footer button *,
+      [data-theme="light"] .theme-adapt-dark button.bg-white,
+      [data-theme="light"] .theme-adapt-dark button.bg-white * {
+        color: #0A0A0A !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer button.bg-white,
+      [data-theme="light"] .theme-dark-footer button.bg-white * {
+        background: #0A0A0A !important;
+        color: #FFFFFF !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer .bg-\[\#DFFF00\],
+      [data-theme="light"] .theme-adapt-dark .bg-\[\#DFFF00\],
+      [data-theme="light"] .theme-invert-text .bg-\[\#DFFF00\] {
+        background: #DFFF00 !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer .bg-\[\#FF2DA0\],
+      [data-theme="light"] .theme-adapt-dark .bg-\[\#FF2DA0\],
+      [data-theme="light"] .theme-invert-text .bg-\[\#FF2DA0\] {
+        background: #FF2DA0 !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer .bg-black,
+      [data-theme="light"] .theme-adapt-dark .bg-black {
+        background: #0A0A0A !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer .bg-black *,
+      [data-theme="light"] .theme-adapt-dark .bg-black * {
+        color: #FFFFFF !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer .border-white,
+      [data-theme="light"] .theme-dark-footer .border-white\/30,
+      [data-theme="light"] .theme-dark-footer .border-white\/25,
+      [data-theme="light"] .theme-adapt-dark .border-white,
+      [data-theme="light"] .theme-adapt-dark .border-white\/30,
+      [data-theme="light"] .theme-adapt-dark .border-white\/25,
+      [data-theme="light"] .theme-soft-line {
+        border-color: rgba(10,10,10,.32) !important;
+      }
+
+      [data-theme="light"] .theme-photo-break-overlay {
+        background: linear-gradient(90deg, rgba(250,247,239,.92) 0%, rgba(250,247,239,.72) 52%, rgba(250,247,239,.12) 100%) !important;
+      }
+
+      [data-theme="light"] .theme-team-card {
+        background: #FFFFFF !important;
+        color: #0A0A0A !important;
+      }
+
+      [data-theme="dark"] .theme-team-card {
+        background: #F3F0E9 !important;
+        color: #0A0A0A !important;
+      }
+
+      [data-theme="light"] .theme-mode-label::after {
+        content: " / LIGHT";
+      }
+
+      [data-theme="dark"] .theme-mode-label::after {
+        content: " / DARK";
+      }
+
     `}</style>
   );
 }
@@ -791,7 +871,7 @@ function HomePage({
 
         <div className="relative z-10 flex min-h-[calc(100vh-82px)] flex-col justify-between px-5 py-8 text-white theme-invert-text md:px-8 xl:px-10">
           <div className="flex items-center justify-between border-b-2 border-white/40 pb-5 theme-soft-line">
-            <Tag variant="white">another digital agency</Tag>
+            <Tag variant="white"><span className="theme-mode-label">another digital agency</span></Tag>
             <div className="hidden text-xs font-black uppercase tracking-[0.18em] text-white/80 theme-muted md:block">
               Make some noise. Make it useful.
             </div>
@@ -922,7 +1002,7 @@ function HomeMemberCard({ role, onClick }: { role: RoleItem; onClick: () => void
   return (
     <button
       onClick={onClick}
-      className="paper-card group w-[300px] shrink-0 snap-start overflow-hidden border-2 border-black bg-[#F3F0E9] text-left text-black transition hover:-translate-y-1 hover:shadow-[8px_8px_0_#DFFF00] md:w-[360px]"
+      className="paper-card theme-team-card group w-[300px] shrink-0 snap-start overflow-hidden border-2 border-black bg-[#F3F0E9] text-left text-black transition hover:-translate-y-1 hover:shadow-[8px_8px_0_#DFFF00] md:w-[360px]"
     >
       <div className="relative h-[290px] overflow-hidden bg-black">
         <img
@@ -1142,7 +1222,7 @@ function HomePhotoBreak() {
         alt="Visual break"
         className="theme-photo absolute inset-0 h-full w-full object-cover opacity-75 grayscale"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/65 to-transparent" />
+      <div className="theme-photo-break-overlay absolute inset-0 bg-gradient-to-r from-black via-black/65 to-transparent" />
 
       <div className="relative z-10 flex min-h-[76vh] items-end px-5 py-14 text-white theme-invert-text md:px-8 xl:px-10">
         <div>
