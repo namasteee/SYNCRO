@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 type Page = "Home" | "Servizi" | "Metodo" | "Plugins" | "Work" | "Team" | "Contatti";
+type Theme = "dark" | "light";
 
 type Service = {
   id: string;
@@ -370,6 +371,101 @@ function GlobalStyles() {
           grid-template-columns: 1fr;
         }
       }
+
+      /* THEME TOGGLE */
+      [data-theme="dark"] {
+        --page-bg: #F3F0E9;
+        --hero-filter: grayscale(1) contrast(1.08) brightness(.82);
+        --photo-filter: grayscale(1) contrast(1.08) brightness(.9);
+      }
+
+      [data-theme="light"] {
+        --page-bg: #FAF7EF;
+        --hero-filter: grayscale(.18) contrast(.96) brightness(1.12);
+        --photo-filter: grayscale(.12) contrast(.98) brightness(1.06);
+      }
+
+      [data-theme="light"] {
+        background: var(--page-bg);
+        color: #0A0A0A;
+      }
+
+      [data-theme="light"] .theme-adapt-bg {
+        background: #FAF7EF !important;
+      }
+
+      [data-theme="light"] .theme-adapt-dark {
+        background: #FAF7EF !important;
+        color: #0A0A0A !important;
+      }
+
+      [data-theme="light"] .theme-adapt-panel {
+        background: rgba(250,247,239,.78) !important;
+        color: #0A0A0A !important;
+        backdrop-filter: blur(10px);
+      }
+
+      [data-theme="light"] .theme-adapt-hero-mask {
+        background:
+          linear-gradient(90deg, rgba(250,247,239,.94) 0%, rgba(250,247,239,.76) 46%, rgba(250,247,239,.20) 100%),
+          linear-gradient(0deg, rgba(250,247,239,.82) 0%, transparent 42%) !important;
+      }
+
+      [data-theme="dark"] .hero-photo,
+      [data-theme="light"] .hero-photo {
+        filter: var(--hero-filter);
+      }
+
+      [data-theme="dark"] .theme-photo,
+      [data-theme="light"] .theme-photo {
+        filter: var(--photo-filter);
+      }
+
+      [data-theme="light"] .theme-invert-text,
+      [data-theme="light"] .theme-invert-text * {
+        color: #0A0A0A !important;
+      }
+
+      [data-theme="light"] .theme-muted {
+        color: rgba(10,10,10,.72) !important;
+      }
+
+      [data-theme="light"] .theme-soft-line {
+        border-color: rgba(10,10,10,.28) !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer {
+        background: #FAF7EF !important;
+        color: #0A0A0A !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer .text-white,
+      [data-theme="light"] .theme-dark-footer .text-white\/75 {
+        color: #0A0A0A !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer .border-white,
+      [data-theme="light"] .theme-dark-footer .border-white\/30 {
+        border-color: rgba(10,10,10,.35) !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer .bg-white {
+        background: #0A0A0A !important;
+        color: #fff !important;
+      }
+
+      [data-theme="light"] .theme-dark-footer .text-\[\#DFFF00\] {
+        color: #FF2DA0 !important;
+      }
+
+      [data-theme="light"] .theme-toggle-dot {
+        transform: translateX(1.35rem);
+      }
+
+      [data-theme="dark"] .theme-toggle-dot {
+        transform: translateX(0);
+      }
+
     `}</style>
   );
 }
@@ -435,7 +531,7 @@ function MidTitle({ children, className = "" }: { children: React.ReactNode; cla
   return <h2 className={`display text-[48px] sm:text-[68px] md:text-[86px] ${className}`}>{children}</h2>;
 }
 
-function Header({ page, onNavigate }: { page: Page; onNavigate: (page: Page) => void }) {
+function Header({ page, onNavigate, theme, onToggleTheme }: { page: Page; onNavigate: (page: Page) => void; theme: Theme; onToggleTheme: () => void }) {
   const [open, setOpen] = useState(false);
   const [egg, setEgg] = useState(false);
 
@@ -469,6 +565,16 @@ function Header({ page, onNavigate }: { page: Page; onNavigate: (page: Page) => 
 
           <div className="hidden items-center gap-4 lg:flex">
             <button
+              onClick={onToggleTheme}
+              className="flex items-center gap-3 border-2 border-black bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-black transition hover:bg-[#DFFF00]"
+              aria-label="Toggle dark and light mode"
+            >
+              <span>{theme === "dark" ? "Dark" : "Light"}</span>
+              <span className="relative inline-flex h-5 w-11 items-center border-2 border-black bg-black">
+                <span className="theme-toggle-dot absolute left-1 h-3 w-3 bg-[#DFFF00] transition-transform" />
+              </span>
+            </button>
+            <button
               onClick={() => setEgg(true)}
               className="text-xs font-black uppercase tracking-[0.18em] hover:bg-[#FF2DA0]"
             >
@@ -482,12 +588,21 @@ function Header({ page, onNavigate }: { page: Page; onNavigate: (page: Page) => 
             </button>
           </div>
 
-          <button
-            onClick={() => setOpen((value) => !value)}
-            className="border-2 border-black bg-black px-4 py-2 text-sm font-black uppercase text-white lg:hidden"
-          >
-            Menu
-          </button>
+          <div className="flex items-center gap-2 lg:hidden">
+            <button
+              onClick={onToggleTheme}
+              className="border-2 border-black bg-white px-3 py-2 text-xs font-black uppercase text-black"
+              aria-label="Toggle dark and light mode"
+            >
+              {theme === "dark" ? "Dark" : "Light"}
+            </button>
+            <button
+              onClick={() => setOpen((value) => !value)}
+              className="border-2 border-black bg-black px-4 py-2 text-sm font-black uppercase text-white"
+            >
+              Menu
+            </button>
+          </div>
         </div>
 
         {open ? (
@@ -524,7 +639,7 @@ function Header({ page, onNavigate }: { page: Page; onNavigate: (page: Page) => 
 
 function Footer({ onNavigate }: { onNavigate: (page: Page) => void }) {
   return (
-    <footer className="border-t-2 border-black bg-black px-5 py-14 text-white md:px-8 xl:px-10">
+    <footer className="border-t-2 border-black bg-black px-5 py-14 text-white theme-dark-footer md:px-8 xl:px-10">
       <div className="grid gap-12 lg:grid-cols-[1.15fr_.85fr]">
         <div>
           <SyncroWordmark light />
@@ -573,7 +688,7 @@ function Footer({ onNavigate }: { onNavigate: (page: Page) => void }) {
           </div>
 
           <div className="border-2 border-white/30 p-5 md:col-span-2">
-            <p className="text-sm font-black uppercase leading-7 tracking-[0.08em] text-white/75">
+            <p className="text-sm font-black uppercase leading-7 tracking-[0.08em] text-white/75 theme-muted">
               Another digital agency. Sì, ma almeno questa prova a non sembrare morta dentro.
             </p>
           </div>
@@ -585,6 +700,10 @@ function Footer({ onNavigate }: { onNavigate: (page: Page) => void }) {
 
 export default function App() {
   const [page, setPage] = useState<Page>("Home");
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "dark";
+    return (localStorage.getItem("syncro-theme") as Theme) || "dark";
+  });
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
   const [selectedPlugin, setSelectedPlugin] = useState<PluginItem | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
@@ -593,6 +712,14 @@ export default function App() {
   useEffect(() => {
     document.title = `Syncro — ${page}`;
   }, [page]);
+
+  useEffect(() => {
+    localStorage.setItem("syncro-theme", theme);
+  }, [theme]);
+
+  function toggleTheme() {
+    setTheme((current) => (current === "dark" ? "light" : "dark"));
+  }
 
   const content = useMemo(() => {
     switch (page) {
@@ -622,11 +749,11 @@ export default function App() {
   }, [page]);
 
   return (
-    <div className="min-h-screen bg-[#F3F0E9] text-black selection:bg-[#DFFF00] selection:text-black">
+    <div data-theme={theme} className="min-h-screen bg-[#F3F0E9] text-black selection:bg-[#DFFF00] selection:text-black theme-adapt-bg">
       <GlobalStyles />
       <div className="noise pointer-events-none fixed inset-0 z-[1] opacity-[0.07]" />
       <div className="relative z-[2]">
-        <Header page={page} onNavigate={setPage} />
+        <Header page={page} onNavigate={setPage} theme={theme} onToggleTheme={toggleTheme} />
         <main className="slidein">{content}</main>
         <Footer onNavigate={setPage} />
       </div>
@@ -658,14 +785,14 @@ function HomePage({
         <img
           src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=2200&q=80"
           alt="Syncro manifesto background"
-          className="absolute inset-0 h-full w-full object-cover grayscale"
+          className="hero-photo absolute inset-0 h-full w-full object-cover grayscale"
         />
-        <div className="hero-mask absolute inset-0" />
+        <div className="hero-mask theme-adapt-hero-mask absolute inset-0" />
 
-        <div className="relative z-10 flex min-h-[calc(100vh-82px)] flex-col justify-between px-5 py-8 text-white md:px-8 xl:px-10">
-          <div className="flex items-center justify-between border-b-2 border-white/40 pb-5">
+        <div className="relative z-10 flex min-h-[calc(100vh-82px)] flex-col justify-between px-5 py-8 text-white theme-invert-text md:px-8 xl:px-10">
+          <div className="flex items-center justify-between border-b-2 border-white/40 pb-5 theme-soft-line">
             <Tag variant="white">another digital agency</Tag>
-            <div className="hidden text-xs font-black uppercase tracking-[0.18em] text-white/80 md:block">
+            <div className="hidden text-xs font-black uppercase tracking-[0.18em] text-white/80 theme-muted md:block">
               Make some noise. Make it useful.
             </div>
           </div>
@@ -700,7 +827,7 @@ function HomePage({
             </div>
           </div>
 
-          <div className="grid border-2 border-white/50 bg-black/40 backdrop-blur-sm md:grid-cols-6">
+          <div className="grid border-2 border-white/50 bg-black/40 backdrop-blur-sm theme-adapt-panel theme-soft-line md:grid-cols-6">
             {[
               "Brand che non parla",
               "Siti che dormono",
@@ -710,7 +837,7 @@ function HomePage({
               "Processi da Medioevo",
             ].map((item) => (
               <div key={item} className="border-b border-white/30 p-4 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0">
-                <p className="text-[11px] font-black uppercase leading-5 tracking-[0.12em] text-white">{item}</p>
+                <p className="text-[11px] font-black uppercase leading-5 tracking-[0.12em] text-white theme-invert-text">{item}</p>
               </div>
             ))}
           </div>
@@ -801,7 +928,7 @@ function HomeMemberCard({ role, onClick }: { role: RoleItem; onClick: () => void
         <img
           src={role.image}
           alt={role.title}
-          className="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-110"
+          className="theme-photo h-full w-full object-cover grayscale transition duration-700 group-hover:scale-110"
         />
         <div className="absolute left-4 top-4 display text-5xl leading-none" style={{ color: role.color }}>
           {role.number}
@@ -835,17 +962,17 @@ function HomeMixedTeam({
   onNavigate: (page: Page) => void;
 }) {
   return (
-    <section className="border-b-2 border-black bg-black px-5 py-20 text-white md:px-8 xl:px-10">
+    <section className="border-b-2 border-black bg-black px-5 py-20 text-white theme-adapt-dark md:px-8 xl:px-10">
       <div className="mb-10 flex items-center justify-between border-b border-white/25 pb-5">
         <Tag variant="white">mixed team</Tag>
-        <span className="hidden text-xs font-black uppercase tracking-[0.18em] text-white/70 md:block">
+        <span className="hidden text-xs font-black uppercase tracking-[0.18em] text-white/70 theme-muted md:block">
           7 membri / 7 verticali / stesso progetto
         </span>
       </div>
 
       <div className="grid gap-10 xl:grid-cols-[.7fr_1.3fr]">
         <div>
-          <h2 className="display text-[58px] leading-[0.95] text-white md:text-[92px]">
+          <h2 className="display text-[58px] leading-[0.95] text-white theme-invert-text md:text-[92px]">
             Nessuno
             <br />
             normale.
@@ -853,7 +980,7 @@ function HomeMixedTeam({
             Tutti utili.
           </h2>
 
-          <p className="mt-7 max-w-xl text-lg leading-8 text-white/75">
+          <p className="mt-7 max-w-xl text-lg leading-8 text-white/75 theme-muted">
             Sette teste diverse, ognuna verticale sul suo pezzo. Non perfetti singolarmente. Utili quando il progetto chiede più di una grafica carina.
           </p>
 
@@ -872,8 +999,8 @@ function HomeMixedTeam({
             ))}
           </div>
 
-          <div className="border-2 border-white/25 p-5">
-            <p className="text-sm font-black uppercase leading-7 tracking-[0.08em] text-white/75">
+          <div className="border-2 border-white/25 p-5 theme-soft-line">
+            <p className="text-sm font-black uppercase leading-7 tracking-[0.08em] text-white/75 theme-muted">
               Strategy, brand, UX, dev, commerce, content e automation. Il rumore è umano. La direzione no.
             </p>
           </div>
@@ -1009,15 +1136,15 @@ function HomeServices({
 
 function HomePhotoBreak() {
   return (
-    <section className="relative min-h-[76vh] overflow-hidden border-b-2 border-black bg-black">
+    <section className="relative min-h-[76vh] overflow-hidden border-b-2 border-black bg-black theme-adapt-dark">
       <img
         src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=2200&q=80"
         alt="Visual break"
-        className="absolute inset-0 h-full w-full object-cover opacity-75 grayscale"
+        className="theme-photo absolute inset-0 h-full w-full object-cover opacity-75 grayscale"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/65 to-transparent" />
 
-      <div className="relative z-10 flex min-h-[76vh] items-end px-5 py-14 text-white md:px-8 xl:px-10">
+      <div className="relative z-10 flex min-h-[76vh] items-end px-5 py-14 text-white theme-invert-text md:px-8 xl:px-10">
         <div>
           <Tag variant="yellow">visual break / non dormire</Tag>
           <h2 className="display-tight mt-8 max-w-5xl text-[70px] leading-[0.9] md:text-[128px]">
@@ -1027,7 +1154,7 @@ function HomePhotoBreak() {
             <br />
             Più morso.
           </h2>
-          <p className="mt-6 max-w-xl text-lg font-black uppercase leading-8 tracking-[0.04em] text-white/85">
+          <p className="mt-6 max-w-xl text-lg font-black uppercase leading-8 tracking-[0.04em] text-white/85 theme-muted">
             Se il tuo brand non dà fastidio a nessuno, forse non lo sta guardando nessuno.
           </p>
         </div>
@@ -1277,7 +1404,7 @@ function ServicesPage({
               <img
                 src={service.image}
                 alt={service.title}
-                className="h-full min-h-[260px] w-full object-cover grayscale transition duration-700 group-hover:scale-105"
+                className="theme-photo h-full min-h-[260px] w-full object-cover grayscale transition duration-700 group-hover:scale-105"
               />
               <div className="absolute left-4 top-4 display text-6xl leading-none text-[#DFFF00]">0{index + 1}</div>
             </div>
@@ -1470,7 +1597,7 @@ function WorkPage({
             <img
               src={project.image}
               alt={project.title}
-              className="absolute inset-0 h-full w-full object-cover opacity-65 transition duration-700 group-hover:scale-110"
+              className="theme-photo absolute inset-0 h-full w-full object-cover opacity-65 transition duration-700 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
             <div className="relative flex h-full flex-col justify-between p-6">
@@ -1518,7 +1645,7 @@ function TeamPage({
           <Tag variant="black">team</Tag>
           <Tag>7 verticali</Tag>
         </div>
-        <div className="hidden text-xs font-black uppercase tracking-[0.18em] text-white/70 md:block">
+        <div className="hidden text-xs font-black uppercase tracking-[0.18em] text-white/70 theme-muted md:block">
           not normal / useful
         </div>
       </div>
@@ -1578,7 +1705,7 @@ function ContactPage() {
             <img
               src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=80"
               alt="Creative team working"
-              className="h-[360px] w-full object-cover grayscale"
+              className="theme-photo h-[360px] w-full object-cover grayscale"
             />
             <div className="mt-6">
               <Tag variant="white">brief / project / help</Tag>
@@ -1759,7 +1886,7 @@ function RoleModal({ item, onClose }: { item: RoleItem | null; onClose: () => vo
 
         <div className="grid gap-8 md:grid-cols-[280px_1fr]">
           <div className="overflow-hidden border-2 border-black bg-black">
-            <img src={item.image} alt={item.title} className="h-[360px] w-full object-cover grayscale" />
+            <img src={item.image} alt={item.title} className="theme-photo h-[360px] w-full object-cover grayscale" />
           </div>
 
           <div>
